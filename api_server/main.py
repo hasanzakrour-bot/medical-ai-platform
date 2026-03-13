@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers import auth_router, users_router, admin_router, diagnosis_router
+from api_server.routers import auth_router, users_router, admin_router, diagnosis_router
 
 app = FastAPI(
     title="Medical AI API",
