@@ -18,7 +18,12 @@ services:
     dockerfilePath: docker/Dockerfile.ai
     plan: free
     autoDeploy: true
-
+    
+  - type: web
+    name: medical-frontend
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: frontend
 databases:
   - name: medical-db
     plan: free
