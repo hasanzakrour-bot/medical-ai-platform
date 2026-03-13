@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: medical-ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15
+          env:
+            - name: POSTGRES_USER
+              value: medical_user
+            - name: POSTGRES_PASSWORD
+              value: medical_pass
+            - name: POSTGRES_DB
+              value: medical_ai
+          ports:
+            - containerPort: 5432

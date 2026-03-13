@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+  namespace: medical-ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+        - name: api-server
+          image: medical-api-server:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              value: postgresql://medical_user:medical_pass@postgres:5432/medical_ai
+            - name: AI_SERVER_URL
+              value: http://ai-server:8001

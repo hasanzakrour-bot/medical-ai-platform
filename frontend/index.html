@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical AI Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        <input type="email" id="login_email" placeholder="Email">
+        <input type="password" id="login_password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="login_msg"></p>
+    </div>
+
+    <hr>
+
+    <h2>AI Diagnosis & Medical Chat</h2>
+
+    <div id="drop_area">Drag & Drop Image Here</div>
+    <input type="file" id="image_input" onchange="previewImage()">
+    <img id="image_preview" style="max-width:300px; display:none">
+    <select id="disease_category">
+        <option value="skin">Skin</option>
+        <option value="chest_xray">Chest X-Ray</option>
+        <option value="eye">Eye</option>
+    </select>
+    <button onclick="uploadMedicalImage()">Analyze</button>
+    <div id="diagnosis_result"></div>
+
+    <hr>
+
+    <h2>Medical Chat</h2>
+    <div id="chat_box" class="chat-box"></div>
+    <input type="text" id="chat_input" placeholder="Ask your medical question">
+    <script src="scripts.js"></script>
+</body>
+</html>

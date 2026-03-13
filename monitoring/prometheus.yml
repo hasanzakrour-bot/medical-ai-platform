@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+
+  - job_name: "api_server"
+    static_configs:
+      - targets: ["api_server:8000"]
+
+  - job_name: "ai_server"
+    static_configs:
+      - targets: ["ai_server:8001"]
+
+  - job_name: "postgres"
+    static_configs:
+      - targets: ["postgres:5432"]

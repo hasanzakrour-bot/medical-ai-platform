@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-server
+  namespace: medical-ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-server
+  template:
+    metadata:
+      labels:
+        app: ai-server
+    spec:
+      containers:
+        - name: ai-server
+          image: medical-ai-server:latest
+          ports:
+            - containerPort: 8001
+          env:
+            - name: RAG_DATA_PATH
+              value: /app/rag_data

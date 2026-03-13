@@ -1,0 +1,54 @@
+{
+  "name": "Medical AI Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "diagnosis-event",
+        "httpMethod": "POST"
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { alert: $json[\"confidence\"] > 0.9 ? \"HIGH RISK\" : \"NORMAL\" } }];"
+      },
+      "name": "Risk Analysis",
+      "type": "n8n-nodes-base.function",
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "url": "http://api_server:8000/admin/alert",
+        "method": "POST"
+      },
+      "name": "Notify Doctor",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [600, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Risk Analysis",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Risk Analysis": {
+      "main": [
+        [
+          {
+            "node": "Notify Doctor",
+            "type": "main"
+          }
+        ]
+      ]
+    }
+  }
+}

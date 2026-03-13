@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Medical AI Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Medical AI Dashboard</h1>
+
+    <section id="upload_section">
+        <h2>Upload Medical Image</h2>
+        <div id="drop_area">Drag & Drop Image Here</div>
+        <input type="file" id="dashboard_image_input" onchange="previewImage()">
+        <select id="dashboard_disease_category">
+            <option value="skin">Skin</option>
+            <option value="chest_xray">Chest X-Ray</option>
+            <option value="eye">Eye</option>
+        </select>
+        <button onclick="uploadDashboardImage()">Analyze</button>
+        <img id="image_preview" style="max-width:300px; display:none">
+        <div id="dashboard_diagnosis_result"></div>
+    </section>
+
+    <section id="history_section">
+        <h2>Diagnosis History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Disease</th>
+                    <th>Confidence</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody id="history_table"></tbody>
+        </table>
+    </section>
+
+    <section id="stats_section">
+        <h2>Disease Statistics</h2>
+        <canvas id="diseaseChart"></canvas>
+        <div id="chart_container"></div>
+    </section>
+
+    <script src="scripts.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

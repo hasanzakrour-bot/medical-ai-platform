@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: medical_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: medical_user
+      POSTGRES_PASSWORD: medical_pass
+      POSTGRES_DB: medical_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api_server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.api
+    container_name: medical_api
+    depends_on:
+      - postgres
+      - ai_server
+    environment:
+      DATABASE_URL: postgresql://medical_user:medical_pass@postgres:5432/medical_ai
+      AI_SERVER_URL: http://ai_server:8001
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../models:/app/models
+
+  ai_server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ai
+    container_name: medical_ai
+    ports:
+      - "8001:8001"
+    volumes:
+      - ../models:/app/models
+      - ../rag_data:/app/rag_data
+
+  frontend:
+    image: nginx:alpine
+    container_name: medical_frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ../frontend:/usr/share/nginx/html:ro
+    depends_on:
+      - api_server
+
+volumes:
+  postgres_data:

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: medical-ingress
+  namespace: medical-ai
+spec:
+  rules:
+    - host: medical-ai.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-server
+                port:
+                  number: 8000

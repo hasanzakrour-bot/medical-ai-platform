@@ -1,0 +1,26 @@
+services:
+
+  - type: web
+    name: medical-api
+    env: docker
+    dockerfilePath: docker/Dockerfile.api
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        value: postgresql://medical_user:medical_pass@medical-db:5432/medical_ai
+      - key: AI_SERVER_URL
+        value: https://medical-ai.onrender.com
+
+  - type: web
+    name: medical-ai
+    env: docker
+    dockerfilePath: docker/Dockerfile.ai
+    plan: free
+    autoDeploy: true
+
+databases:
+  - name: medical-db
+    plan: free
+    databaseName: medical_ai
+    user: medical_user
