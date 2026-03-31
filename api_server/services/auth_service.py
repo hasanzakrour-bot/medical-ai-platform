@@ -1,47 +1,32 @@
-from sqlalchemy.orm import Session
-from api_server.utils.security import hash_password, verify_password
-from api_server.utils.security import create_access_token
-from models import User
+from passlib.context import CryptContext
+from jose import jwt
+from datetime import datetime, timedelta
 
+# أدخل مفتاح سري قوي بالفعل في الإنتاج!
+SECRET_KEY = "supersecret"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-def create_user(db: Session, email: str, password: str, role: str):
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    hashed = hash_password(password)
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
-    user = User(
-        email=email,
-        password=hashed,
-        role=role
-    )
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
 
-    db.add(user)
+def create_access_token(data: dict, expires_delta: int = ACCESS_TOKEN_EXPIRE_MINUTES):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=expires_delta)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
-    db.commit()
-
-    db.refresh(user)
-
-    return user
-
-
-def login_user(db: Session, email: str, password: str):
-
-    user = db.query(User).filter(
-        User.email == email
-    ).first()
-
-    if not user:
-
+def decode_access_token(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except Exception as e:
         return None
 
-    if not verify_password(password, user.password):
-
-        return None
-
-    token = create_access_token(
-        {
-            "user_id": user.id,
-            "role": user.role
-        }
-    )
-
-    return token
+# يمكنك إضافة هنا خدمات التسجيل وتوليد الرموز... حسب الحاجة

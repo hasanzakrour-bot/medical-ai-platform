@@ -1,46 +1,40 @@
-from .model_loader import load_model
-import torch
+import torch 
 import numpy as np
 from PIL import Image
 import io
+from transformers import AutoImageProcessor, AutoModelForImageClassification
 
-MODEL_PATH = "models/chest_xray_model.pth"
+HF_MODEL_NAME = "RoccoCristian/Chest-Xray-Classification"
 
-model = load_model(MODEL_PATH)
+# تحميل معالج الصور والنموذج من هاجنغ فيس
+processor = AutoImageProcessor.from_pretrained(HF_MODEL_NAME)
+model = AutoModelForImageClassification.from_pretrained(HF_MODEL_NAME)
 
-DISEASES = [
-    "Atelectasis", "Cardiomegaly", "Effusion", "Infiltration",
-    "Mass", "Nodule", "Pneumonia", "Pneumothorax",
-    "Consolidation", "Edema", "Emphysema", "Fibrosis",
-    "Pleural_Thickening", "Hernia"
-]
+# استخراج قائمة الأمراض من إعدادات النموذج
+DISEASES = [model.config.id2label[i] for i in range(len(model.config.id2label))]
 
 def preprocess_image(file):
-
     img_bytes = file.file.read()
-    img = Image.open(io.BytesIO(img_bytes)).convert("L")
-    img = img.resize((224,224))
-    img = np.array(img, dtype=np.float32)/255.0
-    img = np.expand_dims(img, axis=0)  # batch dimension
-    img = np.expand_dims(img, axis=0)  # channel dimension
-    tensor = torch.tensor(img, dtype=torch.float32)
-    return tensor
+    img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+    # معالجة الصورة لتتناسب مع النموذج
+    inputs = processor(images=img, return_tensors="pt")
+    return inputs
 
 def predict_xray(file):
-
-    tensor = preprocess_image(file)
+    inputs = preprocess_image(file)
 
     with torch.no_grad():
-
-        output = model(tensor)
-        probs = torch.sigmoid(output).numpy()[0]
+        outputs = model(**inputs)
+        logits = outputs.logits
+        probs = torch.softmax(logits, dim=1).numpy()[0]  # النهج المعتاد للنواتج التصنيفية
 
     # بناء قائمة الأمراض مع نسبة الثقة
     results = []
     for i, disease in enumerate(DISEASES):
+        confidence = float(probs[i]) if i < len(probs) else 0.0
         results.append({
             "disease": disease,
-            "confidence": float(probs[i])
+            "confidence": confidence
         })
 
     # ترتيب النتائج حسب الثقة

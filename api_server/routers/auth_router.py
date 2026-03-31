@@ -1,51 +1,20 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
-from database import get_db
-from schemas.user_schema import UserCreate, UserLogin
-from services.auth_service import create_user, login_user
+from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 
 router = APIRouter(
     prefix="/auth",
-    tags=["auth"]
+    tags=["Authentication"]
 )
 
-
-@router.post("/register")
-
-def register(
-    user: UserCreate,
-    db: Session = Depends(get_db)
-):
-
-    created = create_user(
-        db,
-        user.email,
-        user.password,
-        user.role
-    )
-
-    return {
-        "id": created.id,
-        "email": created.email,
-        "role": created.role
-    }
-
+class UserLoginRequest(BaseModel):
+    username: str
+    password: str
 
 @router.post("/login")
+def login(user: UserLoginRequest):
+    # استبدل بهذا منطق التحقق فعلياً
+    if user.username == "admin" and user.password == "admin":
+        return {"access_token": "dummy-token", "token_type": "bearer"}
+    raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
-def login(
-    user: UserLogin,
-    db: Session = Depends(get_db)
-):
-
-    token = login_user(
-        db,
-        user.email,
-        user.password
-    )
-
-    if not token:
-
-        return {"error": "invalid credentials"}
-
-    return {"access_token": token}
+# أضف نقاط التسجيل، تجديد الجلسة، الخروج... حسب الحاجة

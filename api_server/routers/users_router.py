@@ -1,23 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from database import get_db
-from models import Patient, Diagnosis, DiagnosisResult
-from typing import List
+from fastapi import APIRouter
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
 
-@router.get("/patients/{patient_id}/diagnosis")
-def get_patient_diagnosis(patient_id: int, db: Session = Depends(get_db)):
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
-    if not patient:
-        raise HTTPException(status_code=404, detail="Patient not found")
+@router.get("/")
+def list_users():
+    # استبدل بهذا استعلام فعلي من قاعدة بياناتك أو ORM
+    return [{"username": "admin"}, {"username": "user1"}]
 
-    diagnoses = db.query(Diagnosis).filter(Diagnosis.patient_id == patient_id).all()
-    result = []
-    for diag in diagnoses:
-        items = [{"disease": r.disease, "confidence": r.confidence} for r in diag.results]
-        result.append({"diagnosis_id": diag.id, "results": items})
-    return result
+@router.get("/{user_id}")
+def get_user(user_id: int):
+    # استبدل بهذا استعلام فعلي من قاعدة بياناتك أو ORM
+    return {"user_id": user_id, "username": f"user{user_id}"}

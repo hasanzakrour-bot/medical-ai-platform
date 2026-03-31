@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Form
 from fastapi.responses import JSONResponse
-from models.predictor import predict_xray
-from rag.rag_engine import rag_answer
+from ai_server.models.predictor import predict_xray
+from ai_server.rag.rag_engine import rag_answer
 
 router = APIRouter(
     prefix="/ai",
