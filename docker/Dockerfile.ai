@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ai_server ./ai_server
 
-COPY rag_data ./rag_data
+#COPY rag_data ./rag_data
 
 EXPOSE 8001
 
