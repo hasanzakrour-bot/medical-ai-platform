@@ -4,7 +4,7 @@ from PIL import Image
 import io
 from transformers import AutoImageProcessor, AutoModelForImageClassification
 
-HF_MODEL_NAME = "RoccoCristian/Chest-Xray-Classification"
+HF_MODEL_NAME = "codewithdark/vit-chest-xray"
 
 # تحميل معالج الصور والنموذج من هاجنغ فيس
 processor = AutoImageProcessor.from_pretrained(HF_MODEL_NAME)
